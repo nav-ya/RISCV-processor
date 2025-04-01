@@ -1,50 +1,36 @@
 module top (
-    input clk, reset
+    input wire clk,
+    input wire reset
 );
-    // Pipeline stages
-    wire [31:0] instr, pc;
-    wire [31:0] reg_data1, reg_data2, alu_result, mem_data;
-    wire [4:0] rd;
-    wire [6:0] opcode;
 
-    // IF Stage
-    instruction_fetch IF_stage (
+    // Wires to connect IF and ID stages
+    wire [31:0] instr;
+    wire [31:0] pc_if_to_id;
+    wire [31:0] rs1_data, rs2_data;
+    wire [4:0] rd;
+    wire [31:0] imm;
+    wire [31:0] pc_id_to_ex;
+
+    // Instantiate IF stage
+    if_stage if_stage_inst (
         .clk(clk),
         .reset(reset),
-        .pc_out(pc),
-        .instr_out(instr)
-    );
-
-    // ID Stage
-    instruction_decode ID_stage (
-        .clk(clk),
+        .pc_in(32'b0), // Placeholder for branch/jump (not used yet)
         .instr(instr),
-        .reg_data1(reg_data1),
-        .reg_data2(reg_data2),
-        .opcode(opcode),
-        .rd(rd)
+        .pc_out(pc_if_to_id)
     );
 
-    // EX Stage
-    execute EX_stage (
+    // Instantiate ID stage
+    id_stage id_stage_inst (
         .clk(clk),
-        .reg_data1(reg_data1),
-        .reg_data2(reg_data2),
-        .alu_result(alu_result)
-    );
-
-    // MEM Stage
-    memory_access MEM_stage (
-        .clk(clk),
-        .alu_result(alu_result),
-        .mem_data(mem_data)
-    );
-
-    // WB Stage
-    write_back WB_stage (
-        .clk(clk),
-        .mem_data(mem_data),
-        .rd(rd)
+        .reset(reset),
+        .instr(instr),
+        .pc_in(pc_if_to_id),
+        .rs1_data(rs1_data),
+        .rs2_data(rs2_data),
+        .rd(rd),
+        .imm(imm),
+        .pc_out(pc_id_to_ex)
     );
 
 endmodule
