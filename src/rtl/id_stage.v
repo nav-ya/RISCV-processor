@@ -15,6 +15,7 @@ module id_stage (
 
     // Instruction fields
     wire [6:0] opcode;
+    wire [4:0] rd_wire;  // Renamed to avoid conflict
     wire [4:0] rs1;
     wire [4:0] rs2;
     wire [2:0] funct3;
@@ -22,7 +23,7 @@ module id_stage (
 
     // Extract instruction fields
     assign opcode = instr[6:0];
-    assign rd     = instr[11:7];
+    assign rd_wire = instr[11:7];  // Use rd_wire instead of rd
     assign rs1    = instr[19:15];
     assign rs2    = instr[24:20];
     assign funct3 = instr[14:12];
@@ -37,7 +38,6 @@ module id_stage (
         reg_file[0] = 32'h0;      // x0 is always 0
         reg_file[1] = 32'h5;      // x1 = 5
         reg_file[2] = 32'hA;      // x2 = 10
-        // Add more initial values as needed
     end
 
     // Sequential logic: Decode instruction and read register file
@@ -58,7 +58,7 @@ module id_stage (
             if (rs2 == 5'b0) rs2_data <= 32'h0;
 
             // Pass through rd and PC
-            rd <= rd;
+            rd <= rd_wire;  // Assign the decoded rd value to the output reg
             pc_out <= pc_in;
 
             // Generate immediate (simplified for I-type for now)
@@ -70,3 +70,4 @@ module id_stage (
     end
 
 endmodule
+
