@@ -14,7 +14,8 @@ module if_stage (
         instr_mem[0] = 32'h00000013; // nop (addi x0, x0, 0)
         instr_mem[1] = 32'h00108093; // addi x1, x1, 1
         instr_mem[2] = 32'h00210113; // addi x2, x2, 2
-        // Add more test instructions as needed
+        instr_mem[3] = 32'h00318193; // addi x3, x3, 3
+        instr_mem[4] = 32'h00420213; // addi x4, x4, 4
     end
 
     // Sequential logic: Update PC and fetch instruction
